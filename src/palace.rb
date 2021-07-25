@@ -6,18 +6,11 @@ class Palace
   @@model = $genanki.Model.new(
     1, # Model id; should be randomized and stored eventually
     "BibleVerseMemorization", # Model Name
-    css: "css/mnemonic_cards.css",
+    css: File.open("css/mnemonic_cards.css").read(),
     fields: [
-      {"name": "VerseID"},
-      {"name": "OddWords"},
-      {"name": "EvenWords"},
-      {"name": "FirstLetters"},
-      {"name": "PrecedingVerseID"},
-      {"name": "PrecedingVerseText"},
-      {"name": "VerseText"},
-      {"name": "MnemonicText"}
-    ],
-    # Badly need to make a Template class to clean thiis stuff up.
+      "VerseID", "OddWords", "EvenWords", "FirstLetters", "PrecedingVerseID",
+      "PrecedingVerseText", "VerseText", "MnemonicText"].fields,
+    # Badly need to make a Template class to clean this stuff up.
     templates: [{ 
     # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
         "name": "SummaryForPrecedingVerse",

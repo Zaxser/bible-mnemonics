@@ -5,3 +5,7 @@ div.verse.text {
 div.verse.id {
   color: black;
 }
+
+div {
+  text-align: center;
+}
