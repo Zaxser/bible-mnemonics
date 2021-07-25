@@ -8,6 +8,7 @@ class String
     actions: Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@actions)},
     objects:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@objects)}
   }
+  
   def letter?
     self.match?(/[[:alpha:]]/)
   end

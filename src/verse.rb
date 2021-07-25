@@ -1,14 +1,9 @@
 class Kj::Verse
   def room
-    window = self.chapter.book.mnemonic
-    walls = self.number.mnemonic
-    floor = self.chapter.mnemonic
-    characters = self.text.characters
-    
-    Room.new(self.chapter.book, self.number, self.chapter.number, self.text)
+    Room.new(self)
   end
 
-  def mnemonic(type=:room)
+  def mnemonic(type=:number)
     return self.number.mnemonic if type == :number
     return self.text.mnemonic if type == :text
     return self.room.mnemonic if type == :room
@@ -18,7 +13,7 @@ class Kj::Verse
 
   # Displays a a label for the verse in the pattern Book Chapter:Verse
   def identity
-    self.book_name + " " + self.chapter_id.to_s + ":" + self.number.to_s
+    "#{self.book_name} #{self.number}:#{self.number}"
   end
 
   # Makes a div that displays the preceding verse as a hint.
@@ -40,7 +35,7 @@ class Kj::Verse
       word[0]
     end
     first_letters = first_letters.join(" ")
-    first_letters.div(["letters", "hint"])
+    # first_letters.div(["letters", "hint"])
   end
 
   # Makes a div that displays every other word as a hint.
@@ -57,7 +52,7 @@ class Kj::Verse
       end
     end
 
-    hint.join(" ").div("words", "hint", type)
+    hint.join(" ") #.div("words", "hint", type)
   end
 
   # Makes cards of different types wiht 
@@ -84,12 +79,12 @@ class Kj::Verse
   def cards
     cards = []
 
-    # # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-    # unless self.number == 1 and self.chapter.number == 1
-    #   cards << self.card(:preceding_verse, "summary")
-    # end
-    # # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
-    # cards << self.card(false, "summary")
+    # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
+    unless self.number == 1 and self.chapter.number == 1
+      cards << self.card(:preceding_verse, "summary")
+    end
+    # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
+    cards << self.card(false, "summary")
     # 1 card where, given every other word, you fill in the missing words
     cards << self.card(:odd_words, "rote")
     cards << self.card(:even_words, "rote")
