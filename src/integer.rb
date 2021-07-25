@@ -1,7 +1,11 @@
 class Integer
   @@book = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Numbers")
+
+  @@mnemonics = Hash.new do |hash, key| 
+    hash[key] = Mnemonic.from_sheet(key, @@book)
+  end
+
   def mnemonic
-    # Retrieve mnemonic from sheet and create mnemonic object
-    Mnemonic.from_sheet(self, @@book)
+    @@mnemonics[self]
   end
 end

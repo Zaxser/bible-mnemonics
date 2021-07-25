@@ -2,6 +2,12 @@ class String
   @@people = Pandas.read_excel("Mnemonics.xlsx", sheet_name="People")
   @@actions = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Actions")
   @@objects = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Objects")
+
+  @@mnemonics = {
+    people:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@people)},
+    actions: Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@actions)},
+    objects:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@objects)}
+  }
   def letter?
     self.match?(/[[:alpha:]]/)
   end
@@ -11,15 +17,15 @@ class String
   end
 
   def person
-    Mnemonic.from_sheet(self.upcase, @@people, )
+    @@mnemonics[:people][self.upcase]
   end
 
   def action
-    Mnemonic.from_sheet(self.upcase, @@actions)
+    @@mnemonics[:actions][self.upcase]
   end
 
   def object
-    Mnemonic.from_sheet(self.upcase, @@objects)
+    @@mnemonics[:objects][self.upcase]
   end
 
   def characters

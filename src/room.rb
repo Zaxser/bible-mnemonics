@@ -23,13 +23,12 @@ class Room
   def description
     description = "The floor is #{self.floor.device}. "
     description += "The walls are #{self.walls.device}. "
-    description += "The ceiling is #{self.ceiling.device} ." if self.ceiling
+    description += "In the window, you can see a #{self.window.device}. "
+    description += "The ceiling is #{self.ceiling.device}. " if self.ceiling
     
     description += "\nThere are #{self.characters.length} people in the room. "
-    
-    characters.each do |character|
-      description += character.description
-    end
+
+    description += characters.map(&:description).join(" ")
 
     if self.door_behind
       description += "\nBehind you is a door leading back, it has "
