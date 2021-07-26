@@ -16,15 +16,6 @@ class Kj::Verse
     "#{self.book_name} #{self.number}:#{self.number}"
   end
 
-  # Makes a div that displays the preceding verse as a hint.
-  def preceding_verse_hint
-    preceding_verse = self.prev
-    id_div = preceding_verse.identity.div("verse", "preceding", "hint", "id")
-    text_div = preceding_verse.text.div("verse", "preceding", "hint", "text")
-    hint = id_div + " " + text_div
-    hint.div(["verse", "preceding", "hint", "parent"])
-  end
-
   # Makes a div that displays the first letter of each word of the verse as a
   # hint.
   def letter_hint
@@ -35,7 +26,6 @@ class Kj::Verse
       word[0]
     end
     first_letters = first_letters.join(" ")
-    # first_letters.div(["letters", "hint"])
   end
 
   # Makes a div that displays every other word as a hint.
@@ -52,51 +42,6 @@ class Kj::Verse
       end
     end
 
-    hint.join(" ") #.div("words", "hint", type)
-  end
-
-  # Makes cards of different types wiht 
-  def card(hint=false, type="rote")
-    id_div = self.identity.div("verse", "id")
-    mnemonic = self.mnemonic
-    
-    hint_div = preceding_verse_hint if hint == :preceding_verse
-    hint_div = letter_hint if hint == :letter
-    hint_div = word_hint(:odd) if hint == :odd_words
-    hint_div = word_hint(:even) if hint == :even_words
-    hint_div = self.text.div("verse", "text", "answer", "hint") if hint == :reverse
-    hint_div = "" unless hint
-    
-    return Card.new(hint_div, id_div, mnemonic, type) if hint == :reverse
-    
-    text_div = self.text.div("verse", "text", "answer")
-    Card.new(id_div + " " + hint_div, text_div, mnemonic, type)
-  end
-
-  # Creates a bunch of cards for the verse
-  # Maybe add functionality to make this create a variable number / kinds of
-  # cards based on parameters?
-  def cards
-    cards = []
-
-    # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-    unless self.number == 1 and self.chapter.number == 1
-      cards << self.card(:preceding_verse, "summary")
-    end
-    # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
-    cards << self.card(false, "summary")
-    # 1 card where, given every other word, you fill in the missing words
-    cards << self.card(:odd_words, "rote")
-    cards << self.card(:even_words, "rote")
-    # 1 card where, given the first letter of each word in the verse, you recite the verse
-    cards << self.card(:letter, "rote")
-    # 1 card where, given the proceeding verse, you recite the next verse from memory
-    cards << self.card(:preceding_verse, "rote")
-    # 1 card where given book, chapter and verse numbers, you recite the verse from memory
-    cards << self.card(false, "rote")
-    # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
-    cards <<  self.card(:reverse, "rote")
-
-    cards
+    hint.join(" ")
   end
 end
