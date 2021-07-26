@@ -18,7 +18,7 @@ class Character
     if self.object
       return "#{self.person.device} #{self.action.device} #{self.object.device}."
     elsif self.action
-      return "#{self.person.device} #{self.action.device} #{self.person.device}."
+      return "#{self.person.device} #{self.action.device} the door."
     elsif self.person
       return "#{self.person.device} takes a bow."
     else
