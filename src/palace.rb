@@ -1,5 +1,3 @@
-$genanki = PyCall.import_module("genanki")
-
 class Palace
   attr_accessor :floors, :notes, :name, :cards
   @@open_sky = Mnemonic.new(nil, "open sky", "Last chapter, so no floor above")
@@ -11,114 +9,26 @@ class Palace
       "VerseID", "OddWords", "EvenWords", "FirstLetters", "PrecedingVerseID",
       "PrecedingVerseText", "VerseText", "MnemonicText"].fields,
     # Badly need to make a Template class to clean this stuff up.
-    templates: [{ 
+    templates: [ 
     # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-        "name": "SummaryForPrecedingVerse",
-        "qfmt": 
-        "<div class=\"front summary preceding verse\">" +
-          "<div class=\"verse id\">{{VerseID}}</div>" +
-          "<div class=\"verse id\">{{PrecedingVerseID}}</div>" + 
-          "<div class=\"preceding verse hint\">{{PrecedingVerseText}}</div>" +
-        "</div>",
-        "afmt": 
-        "<div class=\"back summary\">" +
-          "<div class=\"verse text\">{{VerseText}}</div>" +
-          "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-        "</div>"
-      },{ 
-    # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
-        "name": "SummaryVerseID",
-        "qfmt": 
-        "<div class=\"front summary\">" +
-          "<div class=\"verse id\">{{VerseID}}</div>" + 
-        "</div>",
-        "afmt": 
-        "<div class=\"back summary\">" +
-          "<div class=\"verse text\">{{VerseText}}</div>" +
-          "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-        "</div>"
-      },{
-        "name": "RoteOddWords",
-        "qfmt": 
-        "<div class=\"front rote\">" +
-          "<div class=\"verse id\">{{VerseID}}</div>" + 
-          "<div class=\"odd words hint\">{{OddWords}}</div>" +
-        "</div>",
-        "afmt": 
-        "<div class=\"back rote\">" +
-          "<div class=\"verse text\">{{VerseText}}</div>" +
-          "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-        "</div>"
-      },{
-        "name": "RoteEvenWords",
-        "qfmt": 
-        "<div class=\"front rote\">" +
-          "<div class=\"verse id\">{{VerseID}}</div>" + 
-          "<div class=\"even words hint\">{{EvenWords}}</div>" +
-        "</div>",
-        "afmt": 
-        "<div class=\"back rote\">" +
-          "<div class=\"verse text\">{{VerseText}}</div>" +
-          "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-        "</div>"
-      }, {
-    # 1 card where, given the first letter of each word in the verse, you recite the verse
-        "name": "RoteFirstLetters",
-        "qfmt": 
-        "<div class=\"front rote\">" +
-          "<div class=\"verse id\">{{VerseID}}</div>" + 
-          "<div class=\"first letters hint\">{{FirstLetters}}</div>" +
-        "</div>",
-        "afmt": 
-        "<div class=\"back rote\">" +
-          "<div class=\"verse text\">{{VerseText}}</div>" +
-          "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-        "</div>"
-      }, {
-    # 1 card where, given the proceeding verse, you recite the next verse from memory
-        "name": "RotePrecedingVerse",
-        "qfmt":
-          "<div class=\"front rote\">" +
-            "<div class=\"verse id\">{{VerseID}}</div>" + 
-            "<div class=\"preceding verse hint\">" +
-              "<div class=\"preceding verse id hint\">" +
-                "{{PrecedingVerseID}}" +
-              "</div>" +
-              "<div class=\"preceding verse text hint\">" +
-                "{{PrecedingVerseText}}" +
-              "</div>" +
-            "</div>" +
-          "</div>",
-        "afmt": 
-          "<div class=\"back rote\">" +
-            "<div class=\"verse text\">{{VerseText}}</div>" +
-            "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-          "</div>"
-      }, {
-    # 1 card where given book, chapter and verse numbers, you recite the verse from memory
-        "name": "RoteNoHint",
-        "qfmt":
-          "<div class=\"front rote\">" +
-            "<div class=\"verse id\">{{VerseID}}</div>" + 
-          "</div>",
-        "afmt": 
-          "<div class=\"back rote\">" +
-            "<div class=\"verse text\">{{VerseText}}</div>" +
-            "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-          "</div>"
-      }, {
-    # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
-        "name": "RoteReverse",
-        "qfmt":
-          "<div class=\"front rote\">" +
-            "<div class=\"verse text\">{{VerseText}}</div>" +
-          "</div>",
-        "afmt": 
-          "<div class=\"back rote\">" +
-            "<div class=\"verse id\">{{VerseID}}</div>" + 
-            "<div class=\"mnemonic text\">{{MnemonicText}}</div>" +
-          "</div>"
-      }   
+      Template.new("SummaryForPrecedingVerse",
+        front_fields: ["VerseID", "PrecedingVerseID", "PrecedingVerseText"]).
+        hash, 
+      # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
+      Template.new("SummaryVerseID" ).hash,
+      # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
+      Template.new("RoteOddWords", front_fields: ["VerseID", "OddWords"]).hash,
+      Template.new("RoteEvenWords", front_fields: ["VerseID", "EvenWords"]).hash,
+      Template.new("RoteFirstLetters", 
+        front_fields: ["VerseID", "FirstLetters"]).hash,
+      # 1 card where, given the proceeding verse, you recite the next verse from memory
+      Template.new("RotePrecedingVerse", front_fields: 
+        ["VerseID", "PrecedingVerseText", "PrecedingVerseID"]).hash,
+      # 1 card where given book, chapter and verse numbers, you recite the verse from memory
+      Template.new("RoteNoHint").hash,
+      # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
+      Template.new("RoteReverse", front_fields: ["VerseText"],
+        back_fields: ["VerseID", "MnemonicText"]).hash
     ]
   )
 
