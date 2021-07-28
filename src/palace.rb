@@ -1,34 +1,35 @@
 class Palace
   attr_accessor :floors, :notes, :name, :cards
   @@open_sky = Mnemonic.new(nil, "open sky", "Last chapter, so no floor above")
+
+  # It feels like the model, deck and note stuff should have their own classes,
+  # but I'm not sure how to do it yet.
   @@model = $genanki.Model.new(
     1, # Model id; should be randomized and stored eventually
     "BibleVerseMemorization", # Model Name
     css: File.open("css/mnemonic_cards.css").read(),
     fields: [
       "VerseID", "OddWords", "EvenWords", "FirstLetters", "PrecedingVerseID",
-      "PrecedingVerseText", "VerseText", "MnemonicText"].fields,
-    # Badly need to make a Template class to clean this stuff up.
+      "PrecedingVerseText", "VerseText", "MnemonicText", "VerseAudio"].fields,
     templates: [ 
     # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-      Template.new("SummaryForPrecedingVerse",
-        front_fields: ["VerseID", "PrecedingVerseID", "PrecedingVerseText"]).
-        hash, 
+      Template.new("SummaryForPrecedingVerse", 
+        question: "html/summaryPrecedingVerse.html").hash,
       # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
-      Template.new("SummaryVerseID" ).hash,
+      Template.new("SummaryVerseID", 
+      question: "html/summaryVerseID.html").hash,
       # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-      Template.new("RoteOddWords", front_fields: ["VerseID", "OddWords"]).hash,
-      Template.new("RoteEvenWords", front_fields: ["VerseID", "EvenWords"]).hash,
+      Template.new("RoteOddWords", question: "html/roteOddWords.html").hash,
+      Template.new("RoteEvenWords", question: "html/roteEvenWords.html").hash,
       Template.new("RoteFirstLetters", 
-        front_fields: ["VerseID", "FirstLetters"]).hash,
+        question: "html/RoteFirstLetters.html").hash,
       # 1 card where, given the proceeding verse, you recite the next verse from memory
-      Template.new("RotePrecedingVerse", front_fields: 
-        ["VerseID", "PrecedingVerseText", "PrecedingVerseID"]).hash,
+      Template.new("RotePrecedingVerse", 
+        question: "html/RotePrecedingVerse.html").hash,
       # 1 card where given book, chapter and verse numbers, you recite the verse from memory
-      Template.new("RoteNoHint").hash,
+      Template.new("RoteVerseID", question: "html/roteVerseID.html").hash,
       # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
-      Template.new("RoteReverse", front_fields: ["VerseText"],
-        back_fields: ["VerseID", "MnemonicText"]).hash
+      Template.new("RoteReverse", question: "html/roteReverse.html", answer: "html/reverseAnswer.html").hash
     ]
   )
 
@@ -82,7 +83,7 @@ class Palace
 
   def notes
     return self.cards unless cards.empty?
-
+    # TODO: HTML Encode each of the fields, Just In Case
     self.floors.each_with_index do |floor, index|
       floor.each do |room|
         self.cards << $genanki.Note.new(model: @@model, fields: [
@@ -93,7 +94,8 @@ class Palace
           room.verse.prev.identity, #{"name": "PrecedingVerseID"}
           room.verse.prev.text, # {"name": "PrecedingVerseText"},
           room.verse.text, #{"name": "VerseText"},
-          room.description #{"name": "MnemonicText"}
+          room.description, #{"name": "MnemonicText"}
+          "[sound:" + room.verse.audio_path.split("/")[-1] + "]"
         ])
       end
     end
@@ -111,6 +113,8 @@ class Palace
       deck.add_note(note)
     end
     
-    $genanki.Package.new(deck)
+    package = $genanki.Package.new(deck)
+    package.media_files = Pathname.glob("audio-verses/*/*/*").map {|v| v.to_s}
+    package
   end
 end

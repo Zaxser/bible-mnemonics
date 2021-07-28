@@ -13,7 +13,7 @@ class Kj::Verse
 
   # Displays a a label for the verse in the pattern Book Chapter:Verse
   def identity
-    "#{self.book_name} #{self.number}:#{self.number}"
+    "#{self.book_name} #{self.chapter.number}:#{self.number}"
   end
 
   # Makes a div that displays the first letter of each word of the verse as a
@@ -43,5 +43,13 @@ class Kj::Verse
     end
 
     hint.join(" ")
+  end
+
+  def audio_path
+    book = self.chapter.book
+    chapter_id = self.chapter.number.to_s.rjust(3, "0")
+    verse_id = self.number.to_s.rjust(3, "0")
+    book_id = book.id.to_s.rjust(2, "0")
+    "audio-verses/#{book_id} #{book.name}/#{book.name} #{chapter_id}/#{book.name} #{chapter_id} #{verse_id}.mp3"
   end
 end
