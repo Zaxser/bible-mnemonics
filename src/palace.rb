@@ -98,12 +98,12 @@ class Palace
       floor.each do |room|
         fields = [
           room.verse.identity, # {"name": "VerseID"},
-          room.verse.prev.text, # {"name": "PrecedingVerseText"},
+          room.verse.text, # {"name": "PrecedingVerseText"},
           room.verse.word_hint(:odd), #{"name": "OddWords"},
           room.verse.word_hint(:even), #{"name": "EvenWords"},
           room.verse.letter_hint, #{"name": "FirstLetters"},
           room.verse.prev.identity, #{"name": "PrecedingVerseID"}
-          room.verse.text, #{"name": "VerseText"},
+          room.verse.prev.text, #{"name": "VerseText"},
           room.description, #{"name": "MnemonicText"}
           "[sound:" + room.verse.audio_path.split("/")[-1] + "]",
           room.verse.prev.number, # "PrecedingVerseNumber", 

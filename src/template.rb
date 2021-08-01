@@ -7,7 +7,7 @@ class Template
   attr_accessor :question_format, :answer_format, :name
   def initialize(name, question:, answer:)
     self.name = name
-    header = open("html/header.html").read
+    header = open("html/header.html") {|f| f.read}
     open(question) {|f| self.question_format = header + f.read}
     open(answer)   {|f| self.answer_format   = f.read}
   end
