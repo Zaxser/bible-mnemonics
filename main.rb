@@ -1,6 +1,9 @@
 require "pycall"
 $genanki = PyCall.import_module("genanki")
+
 require "pandas"
+require "rack/utils"
+
 require "./src/template.rb"
 require "./src/array.rb"
 require "./src/book.rb"

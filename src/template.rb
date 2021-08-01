@@ -1,6 +1,11 @@
 class Template
+  @@answers = {
+    rote: "html/roteAnswer.html",
+    summary: "html/summaryAnswer.html",
+    reverse: "html/roteReverseAnswer.html" 
+  }
   attr_accessor :question_format, :answer_format, :name
-  def initialize(name, question:, answer: "html/verseAnswer.html")
+  def initialize(name, question:, answer:)
     self.name = name
     header = open("html/header.html").read
     open(question) {|f| self.question_format = header + f.read}
