@@ -1,22 +1,13 @@
-class Template
-  @@answers = {
-    rote: "html/roteAnswer.html",
-    summary: "html/summaryAnswer.html",
-    reverse: "html/roteReverseAnswer.html" 
-  }
-  attr_accessor :question_format, :answer_format, :name
-  def initialize(name, question:, answer:)
-    self.name = name
-    header = open("html/header.html") {|f| f.read}
-    open(question) {|f| self.question_format = header + f.read}
-    open(answer)   {|f| self.answer_format   = f.read}
-  end
+# Feels a little ugly to do it this way; but it also felt ugly to keep it a
+# class.
+def template(name, question:, answer:)
+  header = open("html/header.html") {|f| f.read}
+  question_format = header + open(question).read
+  answer_format   = open(answer).read
 
-  def hash
-    {
-      "name": self.name,
-      "qfmt": self.question_format,
-      "afmt": self.question_format + self.answer_format
-    }
-  end
+  {
+    "name": name,
+    "qfmt": question_format,
+    "afmt": question_format + answer_format
+  }
 end

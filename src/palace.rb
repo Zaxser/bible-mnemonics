@@ -2,47 +2,6 @@ class Palace
   attr_accessor :floors, :notes, :name, :cards
   @@open_sky = Mnemonic.new(nil, "open sky", "Last chapter, so no floor above")
 
-  # It feels like the model, deck and note stuff should have their own classes,
-  # but I'm not sure how to do it yet.
-  @@model = $genanki.Model.new(
-    1, # Model id; should be randomized and stored eventually
-    "BibleVerseMemorization", # Model Name
-    css: File.open("css/mnemonic_cards.css").read(),
-    fields: [
-      "VerseID", "VerseText", "OddWords", "EvenWords", "FirstLetters", 
-      "PrecedingVerseID", "PrecedingVerseText", "MnemonicText", "VerseAudio",
-      "PrecedingVerseNumber", "PrecedingChapterNumber", "PrecedingBookName", 
-      "VerseNumber", "ChapterNumber", "BookName"].fields,
-    templates: [ 
-    # 1 card where you recite the verse from memory given every other word
-      Template.new("RoteEvenWords", question: "html/roteEvenWords.html",
-        answer: "html/roteAnswer.html").hash,
-    # 1 card where you recite the verse given the first letter of each word
-      Template.new("RoteFirstLetters", question: "html/roteFirstLetters.html", 
-      answer: "html/roteAnswer.html").hash,
-    # 1 card where you recite the verse from memory given every other word
-      Template.new("RoteOddWords", question: "html/roteOddWords.html",
-      answer: "html/roteAnswer.html").hash,
-    # 1 card where, given the proceeding verse, you recite the next verse from memory
-      Template.new("RotePrecedingVerse",
-      question: "html/rotePrecedingVerse.html",
-      answer: "html/roteAnswer.html").hash,
-    # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
-      Template.new("RoteReverse", question: "html/roteReverse.html", 
-        answer: "html/roteReverseAnswer.html").hash,
-    # 1 card where given book, chapter and verse numbers, you recite the verse from memory
-      Template.new("RoteVerseID", question: "html/roteVerseID.html",
-        answer: "html/roteAnswer.html").hash,
-    # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
-      Template.new("SummaryForPrecedingVerse", 
-        question: "html/summaryPrecedingVerse.html",
-        answer: "html/summaryAnswer.html").hash,
-    # 1 card where you give the basic idea of a verse, given book, chapter and verse numbers
-      Template.new("SummaryVerseID", question: "html/summaryVerseID.html",
-        answer: "html/summaryVerseID.html").hash
-    ]
-  )
-
   def initialize(book)
     self.name = book.name
     self.cards = []
@@ -61,7 +20,8 @@ class Palace
       else
         ceiling = self.floors[floor_number + 1][0].floor
       # The staircase comes at the last room of the floor and hints at the
-      # start of the first verse of the next chapter (if there is a next chapter)
+      # start of the first verse of the next chapter (if there is a next 
+      # chapter)
         floor[-1].upstaircase = self.floors[floor_number + 1][0].characters[0]
       end
       
@@ -77,7 +37,7 @@ class Palace
       
       # The door comes at the beginning of the room and hints at the start of 
       # the preceding verse of the chapter (if there was a preceding verse of 
-      # the chapter
+      # the chapter)
         unless room_number == 0
           room.door_behind = floor[room_number - 1].characters[0]
         end
@@ -96,40 +56,20 @@ class Palace
     # TODO: HTML Encode each of the fields, Just In Case
     self.floors.each_with_index do |floor, index|
       floor.each do |room|
-        fields = [
-          room.verse.identity, # {"name": "VerseID"},
-          room.verse.text, # {"name": "PrecedingVerseText"},
-          room.verse.word_hint(:odd), #{"name": "OddWords"},
-          room.verse.word_hint(:even), #{"name": "EvenWords"},
-          room.verse.letter_hint, #{"name": "FirstLetters"},
-          room.verse.prev.identity, #{"name": "PrecedingVerseID"}
-          room.verse.prev.text, #{"name": "VerseText"},
-          room.description, #{"name": "MnemonicText"}
-          "[sound:" + room.verse.audio_path.split("/")[-1] + "]",
-          room.verse.prev.number, # "PrecedingVerseNumber", 
-          room.verse.prev.chapter.number, # "PrecedingChapterNumber", 
-          room.verse.prev.chapter.book.name, # "PrecedingBookName", 
-          room.verse.number, # "VerseNumber", 
-          room.verse.chapter.number, # "ChapterNumber", 
-          room.verse.chapter.book.name, # "BookName"
-        ]
-
-        fields.map! {|f| Rack::Utils.escape_html(f)}
-
         # Maybe each of the rooms should make their own notes / fields / model?
-        self.cards << $genanki.Note.new(model: @@model, fields: fields)
+        self.cards << room.note
       end
     end
-
+  
     self.cards
   end
-
+  
   def card_pack
     deck = $genanki.Deck.new(
       2, # Deck id; should be randomized and stored eventually
       self.name
     )
-
+  
     self.notes.each_with_index do |note, index|
       deck.add_note(note)
     end
