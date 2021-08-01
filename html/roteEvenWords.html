@@ -1,8 +1,17 @@
-<div class="front rote even">
-  <div class="field hint verse id">
-    {{VerseID}}
+<div class="front rote even container">
+  <div class="row">
+    <div class="field hint verse id col-12">
+      {{BookName}} {{ChapterNumber}}:{{VerseNumber}}
+    </div>
   </div>
-  <div class="field hint even-words">
-    {{EvenWords}}
+  <div class="row">
+    <div class="field hint even-words col-12">
+      {{EvenWords}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="type answer col-12">
+      {{type: VerseText}}
+    </div>
   </div>
 </div>

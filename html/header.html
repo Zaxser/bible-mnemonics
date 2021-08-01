@@ -1,1 +1,50 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<script>
+  //Found here: https://gist.github.com/hinekidori/4085a1222af572057f1058d43cfce773
+  //Script for modifying 'Show Answer' behavior for Input types.
+  var htmlTextNodes = [];
+  var innerHTMLText = [];
+  var htmlNodeLength =document.getElementById('typeans').childNodes.length;
+  var typedAnswer;
+  var correctAnswer;
+  var firstBr = null;
+  var secondBr;
+  
+  //capture each node to array
+  for (i = 0; i < htmlNodeLength; i++) {
+   
+   htmlTextNodes[i] = document.getElementById('typeans').childNodes[i];
+   innerHTMLText[i] = document.getElementById('typeans').childNodes[i].innerHTML;
+   
+   //locate <br> tags for output change markers
+   if (document.getElementById('typeans').childNodes[i].nodeName == "BR") {
+    console.log("Runs if BR");
+    if (firstBr != null) {
+     secondBr = i;
+    } else {
+     firstBr = i;
+    };
+   };
+  };
+  
+  //If answer is correct, firstBr will still be null, so must set to length of typeans.childNode
+  if (firstBr == null) {
+   firstBr = htmlNodeLength;
+  };
+  //assemble typed and correct answer strings
+  typedAnswer = innerHTMLText.slice(0,firstBr).join("");
+  var corr = document.getElementById('correctAnswer');
+  correctAnswer = corr.innerHTML;
+  
+  //Modify answer output
+  if (typedAnswer === correctAnswer) {
+   var c = "<div id='correct'>"+typedAnswer+"</div>";
+   var d = document.getElementById('typeans');
+   d.innerHTML =  c;
+  } else {
+   var e = "<div id='incorrect'>"+typedAnswer+"</div>";
+   var f = document.getElementById('typeans');
+   f.innerHTML =  e;
+  };
+  </script>

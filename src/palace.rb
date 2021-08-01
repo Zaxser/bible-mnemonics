@@ -10,7 +10,9 @@ class Palace
     css: File.open("css/mnemonic_cards.css").read(),
     fields: [
       "VerseID", "OddWords", "EvenWords", "FirstLetters", "PrecedingVerseID",
-      "PrecedingVerseText", "VerseText", "MnemonicText", "VerseAudio"].fields,
+      "PrecedingVerseText", "VerseText", "MnemonicText", "VerseAudio",
+      "PrecedingVerseNumber", "PrecedingChapterNumber", "PrecedingBookName", 
+      "VerseNumber", "ChapterNumber", "BookName"].fields,
     templates: [ 
     # (maybe) 1 card where you give the basic idea of a verse, given the text of the preceding verse
       Template.new("SummaryForPrecedingVerse", 
@@ -22,10 +24,10 @@ class Palace
       Template.new("RoteOddWords", question: "html/roteOddWords.html").hash,
       Template.new("RoteEvenWords", question: "html/roteEvenWords.html").hash,
       Template.new("RoteFirstLetters", 
-        question: "html/RoteFirstLetters.html").hash,
+        question: "html/roteFirstLetters.html").hash,
       # 1 card where, given the proceeding verse, you recite the next verse from memory
       Template.new("RotePrecedingVerse", 
-        question: "html/RotePrecedingVerse.html").hash,
+        question: "html/rotePrecedingVerse.html").hash,
       # 1 card where given book, chapter and verse numbers, you recite the verse from memory
       Template.new("RoteVerseID", question: "html/roteVerseID.html").hash,
       # (maybe) 1 card, where given the text of the verse, you can recite name, number and location
@@ -86,6 +88,7 @@ class Palace
     # TODO: HTML Encode each of the fields, Just In Case
     self.floors.each_with_index do |floor, index|
       floor.each do |room|
+        # Maybe each of the rooms should make their own notes / fields / model?
         self.cards << $genanki.Note.new(model: @@model, fields: [
           room.verse.identity, # {"name": "VerseID"},
           room.verse.word_hint(:odd), #{"name": "OddWords"},
@@ -95,7 +98,13 @@ class Palace
           room.verse.prev.text, # {"name": "PrecedingVerseText"},
           room.verse.text, #{"name": "VerseText"},
           room.description, #{"name": "MnemonicText"}
-          "[sound:" + room.verse.audio_path.split("/")[-1] + "]"
+          "[sound:" + room.verse.audio_path.split("/")[-1] + "]",
+          room.verse.prev.number, # "PrecedingVerseNumber", 
+          room.verse.prev.chapter.number, # "PrecedingChapterNumber", 
+          room.verse.prev.chapter.book.name, # "PrecedingBookName", 
+          room.verse.number, # "VerseNumber", 
+          room.verse.chapter.number, # "ChapterNumber", 
+          room.verse.chapter.book.name, # "BookName"
         ])
       end
     end

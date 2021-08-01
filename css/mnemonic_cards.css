@@ -9,3 +9,8 @@ div.verse.id {
 div {
   text-align: center;
 }
+
+/*Styling for the textbox*/
+input#typeans{
+  text-align: center;
+}

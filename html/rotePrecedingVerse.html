@@ -1,13 +1,24 @@
-<div class="front rote even">
-  <div class="field hint verse id">
-    {{VerseID}}
-  </div>
-  <div class="hint preceding-verse">
-    <div class="field hint verse id preceding-verse-id">
-      {{PrecedingVerseID}}
+<div class="front rote even container">
+  <div class="row">
+    <div class="field hint verse id col-12">
+      {{BookName}} {{ChapterNumber}}:{{VerseNumber}}
     </div>
-    <div class="field hint verse text preceding-verse-text">
-      {{PrecedingVerseText}}
+  </div>
+  <div class="hint preceding-verse container">
+    <div class="row">
+      <div class="field hint verse id preceding-verse-id col-12">
+        {{PrecedingBookName}} {{ChapterNumber}}:{{VerseNumber}}
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="field hint verse text preceding-verse-text col-12">
+        {{PrecedingVerseText}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="type answer col-12">
+      {{type: VerseText}}
     </div>
   </div>
 </div>

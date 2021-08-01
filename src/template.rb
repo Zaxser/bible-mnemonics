@@ -1,7 +1,3 @@
-# Dude. This is stupid. There's no reason to custom generate HTML just to save
-# a few lines of code. What I should do is just make the formats for the front
-# and back their own HTML files.
-
 class Template
   attr_accessor :question_format, :answer_format, :name
   def initialize(name, question:, answer: "html/verseAnswer.html")
