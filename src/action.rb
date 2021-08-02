@@ -13,11 +13,11 @@ class Action
         answer: "html/actionAnswer.html")
     ]
    
-    fields = ["Letter", "Action", "ActionExplanation"]
+    fields = ["Letter", "Action", "ActionExplanation", "LetterImage"]
   
     @@model = $genanki.Model.new(
-      7, # Model id; should be randomized and stored eventually
-      "ObjectMemorization", # Model Name
+      rand(1 << 30..1 << 31), # Model id; should be randomized and stored eventually
+      "ActionMemorization", # Model Name
       css: File.open("css/mnemonic_cards.css").read(),
       fields: fields.fields,
       templates: templates
@@ -32,9 +32,13 @@ class Action
     self.explanation = @@mnemonics[character].explanation
   end
 
-  def note
+  def fields
     fields = [self.character, self.name, self.explanation]
     fields.map! {|f| Rack::Utils.escape_html(f)}
+    fields += ["<img src=\"#{self.character}.jpg\">"]
+  end
+
+  def note
     $genanki.Note.new(model: @@model, fields: fields)
   end
   

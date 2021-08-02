@@ -16,7 +16,7 @@ class Kj::Chapter
     fields = ["ChapterNumber", "ChapterMnemonic", "MnemonicExplanation"]
   
     @@model = $genanki.Model.new(
-      4, # Model id; should be randomized and stored eventually
+      rand(1 << 30..1 << 31), # Model id; should be randomized and stored eventually
       "BibleChapterMemorization", # Model Name
       css: File.open("css/mnemonic_cards.css").read(),
       fields: fields.fields,

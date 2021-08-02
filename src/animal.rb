@@ -13,10 +13,10 @@ class Animal
         answer: "html/objectAnswer.html")
     ]
    
-    fields = ["Letter", "Object", "ObjectExplanation"]
+    fields = ["Letter", "Object", "ObjectExplanation", "LetterImage"]
   
     @@model = $genanki.Model.new(
-      8, # Model id; should be randomized and stored eventually
+      rand(1 << 30..1 << 31), # Model id; should be randomized and stored eventually
       "ObjectMemorization", # Model Name
       css: File.open("css/mnemonic_cards.css").read(),
       fields: fields.fields,
@@ -35,8 +35,8 @@ class Animal
   def fields
     fields = [self.character, self.name, self.explanation]
     fields.map! {|f| Rack::Utils.escape_html(f)}
+    fields += ["<img class=\"letter-image\" src=\"#{self.character}.jpg\">"]
   end
-
   def note
     $genanki.Note.new(model: @@model, fields: self.fields)
   end

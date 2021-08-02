@@ -23,7 +23,7 @@ class Kj::Verse
     fields = ["VerseNumber", "VerseMnemonic", "MnemonicExplanation"]
   
     @@model = $genanki.Model.new(
-      6, # Model id; should be randomized and stored eventually
+      rand(1 << 30..1 << 31), # Model id; should be randomized and stored eventually
       "VerseMemorization", # Model Name
       css: File.open("css/mnemonic_cards.css").read(),
       fields: fields.fields,

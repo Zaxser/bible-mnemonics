@@ -22,5 +22,5 @@ require "./src/verse.rb"
 
 genesis = Kj::Bible.new.books[0]
 palace = Palace.new(genesis)
-palace.card_pack.write_to_file("decks/Genesis.apkg")
 palace.mnemonic_lesson_pack.write_to_file("decks/mnemonic-lesson-Genesis.apkg")
+palace.card_pack.write_to_file("decks/Genesis.apkg")

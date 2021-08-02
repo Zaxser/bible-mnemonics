@@ -39,8 +39,8 @@ class Room
     ]
   
     @@model = $genanki.Model.new(
-      1, # Model id; should be randomized and stored eventually
-      "BibleVerseMemorization", # Model Name
+      rand(1 << 30..1 << 31), # Model id; should be randomized and stored eventually
+      "BibleVerseMemorization-Genesis", # Model Name
       css: File.open("css/mnemonic_cards.css").read(),
       fields: fields.fields,
       templates: templates

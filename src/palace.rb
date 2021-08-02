@@ -1,10 +1,15 @@
 class Palace
-  attr_accessor :floors, :notes, :name, :cards, :audio_path
+  attr_accessor :floors, :notes, :name, :cards, :audio_files, :image_files, 
+    :media
   @@open_sky = Mnemonic.new(nil, "open sky", "Last chapter, so no floor above")
 
   def initialize(book)
     self.name = book.name
-    self.audio_path = "audio-verses/#{book.id} #{book.name}/*/*"
+    
+    audio_path = "audio-verses/#{book.id.to_s.rjust(2, "0")} #{book.name}/*/*"
+    self.audio_files = Pathname.glob(audio_path).map {|p| p.to_s}
+    self.image_files = Pathname.glob("images/*").map {|p| p.to_s}
+    self.media = self.audio_files + self.image_files
     self.cards = []
     # Generate Mnemonic rooms of our Memory Palace for each verse in our book.
     self.floors = book.chapters.map do |chapter|
@@ -65,7 +70,7 @@ class Palace
   
   def card_pack
     deck = $genanki.Deck.new(
-      2, # Deck id; should be randomized and stored eventually
+      rand(1 << 30..1 << 31), # Deck id; should be randomized and stored eventually
       self.name
     )
   
@@ -73,9 +78,7 @@ class Palace
       deck.add_note(note)
     end
     
-    package = $genanki.Package.new(deck)
-    package.media_files = Pathname.glob(self.audio_path).map {|v| v.to_s}
-    package
+    $genanki.Package.new(deck, self.media)
   end
 
   def mnemonic_lesson_notes
@@ -124,7 +127,7 @@ class Palace
 
   def mnemonic_lesson_pack
     deck = $genanki.Deck.new(
-      10, # Deck id; should be randomized and stored eventually
+      rand(1 << 30..1 << 31), # Deck id; should be randomized and stored eventually
       self.name
     )
   
@@ -132,8 +135,6 @@ class Palace
       deck.add_note(note)
     end
     
-    package = $genanki.Package.new(deck)
-    package.media_files = Pathname.glob(self.audio_path).map {|v| v.to_s}
-    package
+    $genanki.Package.new(deck, self.media)
   end
 end
