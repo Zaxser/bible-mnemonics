@@ -1,14 +1,4 @@
 class String
-  @@people = Pandas.read_excel("Mnemonics.xlsx", sheet_name="People")
-  @@actions = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Actions")
-  @@objects = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Objects")
-
-  @@mnemonics = {
-    people:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@people)},
-    actions: Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@actions)},
-    objects:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@objects)}
-  }
-  
   def letter?
     self.match?(/[[:alpha:]]/)
   end
@@ -18,15 +8,17 @@ class String
   end
 
   def person
-    @@mnemonics[:people][self.upcase]
+    Person.new(self.upcase)
   end
 
   def action
-    @@mnemonics[:actions][self.upcase]
+    Action.new(self.upcase)
   end
 
+  # Shouldn't name the O in a PAO Object; probably shouldn't even name this
+  # function object. 
   def object
-    @@mnemonics[:objects][self.upcase]
+    Animal.new(self.upcase)
   end
 
   def characters

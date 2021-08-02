@@ -1,0 +1,47 @@
+# These are the objects in my PAO system; I wanted to name this Object, but
+# that would likely cause nasty problems with shadowing.
+
+class Animal
+  @@objects = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Objects")
+
+  @@mnemonics = Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@objects)}
+
+  attr_accessor :character, :name, :explanation
+  def self.model
+    templates = [
+      template("objectCard", question: "html/objectQuestion.html",
+        answer: "html/objectAnswer.html")
+    ]
+   
+    fields = ["Letter", "Object", "ObjectExplanation"]
+  
+    @@model = $genanki.Model.new(
+      8, # Model id; should be randomized and stored eventually
+      "ObjectMemorization", # Model Name
+      css: File.open("css/mnemonic_cards.css").read(),
+      fields: fields.fields,
+      templates: templates
+    )
+  end
+
+  @@model = self.model
+
+  def initialize(character)
+    self.character = character
+    self.name = @@mnemonics[character].device
+    self.explanation = @@mnemonics[character].explanation
+  end
+
+  def fields
+    fields = [self.character, self.name, self.explanation]
+    fields.map! {|f| Rack::Utils.escape_html(f)}
+  end
+
+  def note
+    $genanki.Note.new(model: @@model, fields: self.fields)
+  end
+
+  def to_s
+    self.name
+  end
+end

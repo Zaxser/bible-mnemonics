@@ -1,6 +1,6 @@
 class Character
   attr_accessor :person, :action, :object
-  def initialize(person, action=false, object=false)
+  def initialize(person=false, action=nil, object=nil)
     self.person = person
     self.action = action
     self.object = object
@@ -8,21 +8,19 @@ class Character
 
   def self.from_chars(chars)
     args = []
-    args << chars[0].person if chars[0]
-    args << chars[1].action if chars[1]
-    args << chars[2].object if chars[2]
+    args << chars[0].person
+    args << (chars[1] ? chars[1].action : "NONE".action)
+    args << (chars[2] ? chars[2].object : "NONE".object)
     Character.new(*args)
   end
 
   def to_s
-    if self.object
-      return "#{self.person.device} #{self.action.device} #{self.object.device}."
-    elsif self.action
-      return "#{self.person.device} #{self.action.device} the door."
-    elsif self.person
-      return "#{self.person.device} takes a bow."
+    if self.action == "NONE"
+      return "#{self.person.to_s} takes a bow."
+    elsif self.object == "NONE"
+      return "#{self.person.to_s} #{self.action.to_s} the door."
     else
-      return ""
+      return "#{self.person.to_s} #{self.action.to_s} #{self.object.to_s}."
     end
   end
 

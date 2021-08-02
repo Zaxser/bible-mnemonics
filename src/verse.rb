@@ -1,4 +1,47 @@
 class Kj::Verse
+  @@people = Pandas.read_excel("Mnemonics.xlsx", sheet_name="People")
+  @@actions = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Actions")
+  @@objects = Pandas.read_excel("Mnemonics.xlsx", sheet_name="Objects")
+
+  @@mnemonics = {
+    people:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@people)},
+    actions: Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@actions)},
+    objects:  Hash.new {|h, k| h[k] = Mnemonic.from_sheet(k, @@objects)}
+  }
+
+  def self.model(*keys)
+    templates = {
+      # 1 card where you recite the verse from memory given every other word
+      card: template("verseCard", question: "html/verseQuestion.html",
+        answer: "html/verseAnswer.html"),
+      book: template("verseReverse", question: "html/verseReverseQuestion.html",
+        answer: "html/verseReverseAnswer.html")
+    }
+  
+    templates = keys == [] ? templates.values : keys.map {|key| templates[key]}
+    
+    fields = ["VerseNumber", "VerseMnemonic", "MnemonicExplanation"]
+  
+    @@model = $genanki.Model.new(
+      6, # Model id; should be randomized and stored eventually
+      "VerseMemorization", # Model Name
+      css: File.open("css/mnemonic_cards.css").read(),
+      fields: fields.fields,
+      templates: templates
+    )
+  end
+
+  @@model = self.model
+
+  def fields
+    fields = [self.number, self.mnemonic.device, self.mnemonic.explanation]
+    fields.map! {|f| Rack::Utils.escape_html(f)}
+  end
+  
+  def note
+    $genanki.Note.new(model: @@model, fields: self.fields)
+  end
+
   def room
     Room.new(self)
   end
